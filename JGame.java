@@ -77,7 +77,9 @@ public class JGame {
 
         lastFrame = getTime();        
         //gameloop
-        while (!Display.isCloseRequested() && !gameOver) {            
+        
+        while (!mayClose() && !gameOver) {     
+            
             glClear(GL_COLOR_BUFFER_BIT);
             //Gets delta hat is used by the library in order to have animations independent from framerate.
             double delta = getDelta();
@@ -92,6 +94,7 @@ public class JGame {
             }
             //Keys and event listening
             while (Keyboard.next()) {
+                
                 if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
                     playerBox.speedY = -0.5; //makes player jump               
                 }
@@ -104,6 +107,7 @@ public class JGame {
             //update pipes on screen, check for collision with player.
             Iterator<Box> i = shapes.iterator();
             while (i.hasNext()) {
+                
                 Box currentBox = i.next();
                 if(playerBox.x >= currentBox.x & playerBox.x <= currentBox.x + PIPE_WIDTH & playerBox.y >= currentBox.y & playerBox.y <= currentBox.y + currentBox.height){
                     System.out.println("COLLISION TOP LEFT CORNER");
@@ -125,6 +129,9 @@ public class JGame {
                     playerScore += 0.5;
                     System.out.println(playerScore);
                     i.remove();
+                if(playerBox.y + playerBox.height >=1000){
+                   gameOver = true;
+                }    
                 }else{                    
                     currentBox.update(delta);
                     currentBox.draw();
@@ -146,9 +153,11 @@ public class JGame {
             if (playerScore == 8){
                 PIPE_SPAWN_TIME = 1;
             }
+            
             Display.update();
             Display.sync(60);
         }
+         
         return playerScore;
     }
     
@@ -167,8 +176,9 @@ public class JGame {
             while (Keyboard.next()) {
                 if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
                     quitScoreScreen = true;              
-                }
+                 }
             }
+            mayClose();
             Display.update();
             Display.sync(60);
         }
@@ -188,7 +198,7 @@ public class JGame {
             ttf.drawString(40, 40, "CHOOSE YOUR DESTINY");
             ttf.drawString(40, 100, "PRESS SPACE TO START THE GAME");
             
-            
+            mayClose();
             while (Keyboard.next()) {
                 if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
                     quitchooseMode = true;
@@ -219,12 +229,7 @@ public class JGame {
                 Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH, DISPLAY_HEIGHT));
                 Display.setTitle("Luccas Malandro Porps Game");
                 Display.create();
-            } catch (LWJGLException e) {
-                e.printStackTrace();
-                Display.destroy();
-                System.exit(1);
-            }
-        glMatrixMode(GL_PROJECTION);
+                glMatrixMode(GL_PROJECTION);
         glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 1, -1);
         glMatrixMode(GL_MODELVIEW);            
         double playerScore;
@@ -238,11 +243,27 @@ public class JGame {
             case 2: showSettings();
                     break;
         }
-        //Display.destroy();            
+        
+            } catch (LWJGLException e) {
+                e.printStackTrace();
+                Display.destroy();
+                System.exit(1);
+            }
+        //Display.destroy();     
+        
         }while (!Display.isCloseRequested());
         Display.destroy();
+        System.exit(0);
     }
 
+    public static boolean mayClose(){
+        if (Display.isCloseRequested()){
+             Display.destroy();
+             System.exit(0);
+        }
+        
+        return false;
+    }
     private static class Box {
         public int x, y, height, width;
         public double speedX, speedY;
