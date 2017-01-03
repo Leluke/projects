@@ -162,6 +162,7 @@ public class JGame {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             ttf.drawString(40, 40, "FINAL SCORE: " + playerScore);
+            ttf.drawString(40, 100, "PRESS SPACE TO GO BACK TO THE MAIN SCREEN");
             
             while (Keyboard.next()) {
                 if (Keyboard.getEventKey() == Keyboard.KEY_SPACE && Keyboard.getEventKeyState()) {
